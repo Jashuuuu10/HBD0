@@ -6,12 +6,10 @@ import { Moon, Sparkles, Heart, Send, RotateCcw } from 'lucide-react';
  * FEATURE FOUR — INTERACTIVE MAKE A WISH
  * Emotional birthday wish-making experience with rising orb animation
  */
-export default function MakeAWish({ onDiscoverSecret, discoveredSecretIds = [] }) {
+export default function MakeAWish() {
   const [step, setStep] = useState('initial'); // 'initial' | 'writing' | 'releasing' | 'released'
   const [wishText, setWishText] = useState('');
   const prefersReducedMotion = useReducedMotion();
-
-  const isSecret6Found = discoveredSecretIds.includes('secret-6');
 
   const handleReady = () => {
     setStep('writing');
@@ -36,21 +34,7 @@ export default function MakeAWish({ onDiscoverSecret, discoveredSecretIds = [] }
         <span className="section-eyebrow">
           <Moon size={14} /> FEATURE FOUR &bull; BIRTHDAY WISH
         </span>
-        <div className="section-title-wrap">
-          <h2 className="section-title">A Wishing Well in the Stars</h2>
-
-          {/* Hidden Message #6 Trigger */}
-          <button
-            type="button"
-            className={`secret-trigger-btn ${isSecret6Found ? 'secret-trigger-btn--found' : ''}`}
-            onClick={() => onDiscoverSecret('secret-6')}
-            aria-label={isSecret6Found ? 'Secret 6 discovered' : 'Hidden wishing whisper'}
-            title={isSecret6Found ? 'Secret found!' : 'A faint whisper near the moon...'}
-          >
-            <Sparkles size={14} className="secret-star-icon" />
-            <span className="secret-pulse-ring" />
-          </button>
-        </div>
+        <h2 className="section-title">A Wishing Well in the Stars</h2>
       </div>
 
       <div className="wish-card-container">

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Camera, X, Heart, Maximize2 } from 'lucide-react';
+import { Camera, X, Maximize2 } from 'lucide-react';
 import { galleryMemories } from '../data/memories';
 import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
 
@@ -8,11 +8,9 @@ import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
  * RETAINED & IMPROVED SECTION: MEMORIES GALLERY
  * Responsive photo gallery with interactive lightbox modal and image fallbacks
  */
-export default function MemoriesGallery({ onDiscoverSecret, discoveredSecretIds = [] }) {
+export default function MemoriesGallery() {
   const [activePhoto, setActivePhoto] = useState(null);
   const [imageErrors, setImageErrors] = useState({});
-
-  const isSecret7Found = discoveredSecretIds.includes('secret-7');
 
   useEffect(() => {
     if (activePhoto) {
@@ -38,21 +36,7 @@ export default function MemoriesGallery({ onDiscoverSecret, discoveredSecretIds 
         <span className="section-eyebrow">
           <Camera size={14} /> PHOTO ARCHIVE
         </span>
-        <div className="section-title-wrap">
-          <h2 className="section-title">Memories Gallery</h2>
-
-          {/* Hidden Message #7 Trigger */}
-          <button
-            type="button"
-            className={`secret-trigger-btn ${isSecret7Found ? 'secret-trigger-btn--found' : ''}`}
-            onClick={() => onDiscoverSecret('secret-7')}
-            aria-label={isSecret7Found ? 'Secret 7 discovered' : 'Hidden photo secret'}
-            title={isSecret7Found ? 'Secret found!' : 'A framed emotion...'}
-          >
-            <Heart size={14} className="secret-star-icon" />
-            <span className="secret-pulse-ring" />
-          </button>
-        </div>
+        <h2 className="section-title">Memories Gallery</h2>
         <p className="section-subtitle">
           Moments frozen in time. Click any photo to view it in full detail.
         </p>

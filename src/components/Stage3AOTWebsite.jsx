@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
 import Navbar from './Navbar';
 import HeroSection from './HeroSection';
@@ -6,13 +6,12 @@ import OurStory from './OurStory';
 import OurCinema from './OurCinema';
 import ReasonsSection from './ReasonsSection';
 import MemoriesGallery from './MemoriesGallery';
-import HiddenMessages from './HiddenMessages';
+import RememberedMoments from './RememberedMoments';
 import GamesSection from './GamesSection';
 import MakeAWish from './MakeAWish';
 import SurpriseModal from './SurpriseModal';
 import BirthdayWishModal from './BirthdayWishModal';
 import Footer from './Footer';
-import { hiddenMessages } from '../data/messages';
 
 /**
  * SCREEN 3: THE MAIN BIRTHDAY EXPERIENCE
@@ -21,33 +20,20 @@ import { hiddenMessages } from '../data/messages';
  * - Full-page visible theme background using public/assets/aot.PNG
  * - Artwork remains clearly recognizable while text is readable
  * - Custom Liquid Glass design system
- * - Integrates all features and retained sections:
- *   1. Feature One: Our Cinema — Parallel Universes
- *   2. Feature Two: Hidden Romantic Messages (8 secrets)
- *   3. Feature Three: Three Functional Mini-Games
+ * - Integrates all features:
+ *   1. Feature One: Our Cinema — Parallel Universes (36 films & series)
+ *   2. Feature Two: The Little Things I Remember (14 editable memory reflections)
+ *   3. Feature Three: Three Functional Mini-Games (including "Finish Our Love Story")
  *   4. Feature Four: Interactive Make a Wish
- *   5. Feature Five: Two-Stage Cinematic Surprise & Birthday Cake
+ *   5. Feature Five: Two-Stage Cinematic Surprise & Rebuilt Birthday Cake
  *   - Our Story, 100 Little Reasons I Love You, Memories Gallery, Birthday Letter
  */
 export default function Stage3AOTWebsite({ onReplay }) {
   const prefersReducedMotion = useReducedMotion();
 
-  // Session state for secrets
-  const [discoveredSecretIds, setDiscoveredSecretIds] = useState([]);
-  const [activeSecretModal, setActiveSecretModal] = useState(null);
-
   // Modals state
   const [surpriseOpen, setSurpriseOpen] = useState(false);
   const [letterOpen, setLetterOpen] = useState(false);
-
-  // Hidden secret discovery callback
-  const handleDiscoverSecret = useCallback((secretId) => {
-    setDiscoveredSecretIds((prev) => (prev.includes(secretId) ? prev : [...prev, secretId]));
-    const foundSecret = hiddenMessages.find((m) => m.id === secretId);
-    if (foundSecret) {
-      setActiveSecretModal(foundSecret);
-    }
-  }, []);
 
   return (
     <div className="stage-3-page">
@@ -82,7 +68,6 @@ export default function Stage3AOTWebsite({ onReplay }) {
       <Navbar
         onOpenSurprise={() => setSurpriseOpen(true)}
         onOpenLetter={() => setLetterOpen(true)}
-        secretCount={discoveredSecretIds.length}
       />
 
       {/* ─── 3. Main Scrollable Sections ─── */}
@@ -90,53 +75,28 @@ export default function Stage3AOTWebsite({ onReplay }) {
         {/* Hero Section */}
         <HeroSection
           onOpenSurprise={() => setSurpriseOpen(true)}
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
         />
 
         {/* Our Story Milestones */}
-        <OurStory
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <OurStory />
 
         {/* Feature 1: Our Cinema — Parallel Universes */}
-        <OurCinema
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <OurCinema />
 
         {/* 100 Little Reasons I Love You */}
-        <ReasonsSection
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <ReasonsSection />
 
         {/* Memories Gallery */}
-        <MemoriesGallery
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <MemoriesGallery />
 
-        {/* Feature 2: Hidden Romantic Messages Drawer / Tracker */}
-        <HiddenMessages
-          discoveredSecretIds={discoveredSecretIds}
-          onDiscoverSecret={handleDiscoverSecret}
-          activeSecretModal={activeSecretModal}
-          onCloseSecretModal={() => setActiveSecretModal(null)}
-        />
+        {/* Feature 2: The Little Things I Remember */}
+        <RememberedMoments />
 
         {/* Feature 3: Three Mini-Games */}
-        <GamesSection
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <GamesSection />
 
         {/* Feature 4: Interactive Make a Wish */}
-        <MakeAWish
-          onDiscoverSecret={handleDiscoverSecret}
-          discoveredSecretIds={discoveredSecretIds}
-        />
+        <MakeAWish />
 
         {/* Climax Call-To-Action Card Before Footer */}
         <section className="climax-trigger-section">
@@ -163,12 +123,10 @@ export default function Stage3AOTWebsite({ onReplay }) {
       <Footer onReplay={onReplay} />
 
       {/* ─── 5. Modals ─── */}
-      {/* Feature 5: Final Cinematic Surprise Modal */}
+      {/* Feature 5: Two-Stage Final Surprise Modal & Rebuilt Cake */}
       <SurpriseModal
         isOpen={surpriseOpen}
         onClose={() => setSurpriseOpen(false)}
-        onDiscoverSecret={handleDiscoverSecret}
-        discoveredSecretIds={discoveredSecretIds}
       />
 
       {/* Birthday Letter Modal */}
@@ -179,4 +137,3 @@ export default function Stage3AOTWebsite({ onReplay }) {
     </div>
   );
 }
-

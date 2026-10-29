@@ -12,12 +12,13 @@ import { Menu, X, Sparkles, Heart } from 'lucide-react';
  * - Our Story
  * - Our Cinema
  * - 100 Reasons
+ * - Memories ("The Little Things I Remember")
  * - Games
  * - Make a Wish
  * - Read Letter (Action)
  * - Surprise (Action)
  */
-export default function Navbar({ onOpenSurprise, onOpenLetter, secretCount = 0 }) {
+export default function Navbar({ onOpenSurprise, onOpenLetter }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
 
@@ -27,6 +28,7 @@ export default function Navbar({ onOpenSurprise, onOpenLetter, secretCount = 0 }
     { label: 'Our Story', href: '#our-story' },
     { label: 'Our Cinema', href: '#our-cinema' },
     { label: '100 Reasons', href: '#reasons' },
+    { label: 'Memories', href: '#little-things' },
     { label: 'Games', href: '#games' },
     { label: 'Make a Wish', href: '#make-a-wish' },
   ];
@@ -34,7 +36,7 @@ export default function Navbar({ onOpenSurprise, onOpenLetter, secretCount = 0 }
   // Observe active section on scroll
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['hero', 'our-story', 'our-cinema', 'reasons', 'memories', 'hidden-messages', 'games', 'make-a-wish'];
+      const sections = ['hero', 'our-story', 'our-cinema', 'reasons', 'memories', 'little-things', 'games', 'make-a-wish'];
       const scrollPos = window.scrollY + 200;
 
       for (let i = sections.length - 1; i >= 0; i--) {
@@ -99,12 +101,6 @@ export default function Navbar({ onOpenSurprise, onOpenLetter, secretCount = 0 }
 
         {/* Right Action Buttons */}
         <div className="navbar-v2__actions">
-          {secretCount > 0 && (
-            <span className="navbar-v2__pill-btn" title="Discovered Secrets in this session">
-              ✨ {secretCount}/8
-            </span>
-          )}
-
           {onOpenLetter && (
             <button
               className="navbar-v2__pill-btn navbar-v2__pill-btn--letter"

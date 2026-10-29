@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { Heart, Sparkles, Compass, Star } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Heart, Sparkles, Compass } from 'lucide-react';
 
 /**
  * Hero Section for Screen 3
@@ -13,11 +13,9 @@ import { Heart, Sparkles, Compass, Star } from 'lucide-react';
  * - Keeps reference aesthetic with metrics & right thumbnails
  * - Includes Hidden Secret #1
  */
-export default function HeroSection({ onOpenSurprise, onDiscoverSecret, discoveredSecretIds = [] }) {
+export default function HeroSection({ onOpenSurprise }) {
   const prefersReducedMotion = useReducedMotion();
   const [thumbActive, setThumbActive] = useState(1);
-
-  const isSecret1Found = discoveredSecretIds.includes('secret-1');
 
   const scrollToUniverse = () => {
     const el = document.getElementById('our-cinema') || document.getElementById('our-universe');
@@ -78,18 +76,6 @@ export default function HeroSection({ onOpenSurprise, onDiscoverSecret, discover
               <Sparkles size={13} className="hero-eyebrow-icon" />
               A LITTLE UNIVERSE, MADE WITH LOVE
             </span>
-
-            {/* Hidden Message #1 Trigger Tastefully Placed */}
-            <button
-              className={`secret-trigger-btn ${isSecret1Found ? 'secret-trigger-btn--found' : ''}`}
-              type="button"
-              onClick={() => onDiscoverSecret('secret-1')}
-              aria-label={isSecret1Found ? 'Secret 1 discovered' : 'Hidden cosmic star'}
-              title={isSecret1Found ? 'Secret discovered! Click to view' : 'What is this faint glow?'}
-            >
-              <Star size={14} className="secret-star-icon" />
-              <span className="secret-pulse-ring" />
-            </button>
           </motion.div>
 
           {/* Main Heading */}

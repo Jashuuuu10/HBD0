@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Gamepad2, X, Heart, Clapperboard, HelpCircle } from 'lucide-react';
+import { Gamepad2, X, Heart, HelpCircle, PenTool } from 'lucide-react';
 import MissionFindMyHeart from './games/MissionFindMyHeart';
 import HowWellDoYouKnowUs from './games/HowWellDoYouKnowUs';
-import ChooseOurMovieUniverse from './games/ChooseOurMovieUniverse';
+import FinishOurLoveStory from './games/FinishOurLoveStory';
 import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
 
 /**
@@ -13,18 +13,15 @@ import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
  * Games:
  * 1. "Mission: Find My Heart" 💗
  * 2. "How Well Do You Know Us?" 🎬
- * 3. "Choose Our Movie Universe" 🎥
+ * 3. "Finish Our Love Story" ✍️❤️
  *
  * Robust Modal Architecture:
  * - Separate header, scrollable content area, footer
  * - Zero overlap between titles, questions, progress bars, and buttons
  * - Escape key to close & restores body scroll
- * - Retains Secret #5 trigger
  */
-export default function GamesSection({ onDiscoverSecret, discoveredSecretIds = [] }) {
-  const [activeGame, setActiveGame] = useState(null); // 'maze' | 'quiz' | 'movie' | null
-
-  const isSecret5Found = discoveredSecretIds.includes('secret-5');
+export default function GamesSection() {
+  const [activeGame, setActiveGame] = useState(null); // 'maze' | 'quiz' | 'story' | null
 
   // Lock body scroll and attach Escape key listener
   useEffect(() => {
@@ -61,12 +58,12 @@ export default function GamesSection({ onDiscoverSecret, discoveredSecretIds = [
       color: '#5ce1e6',
     },
     {
-      id: 'movie',
-      title: 'Choose Our Movie Universe',
-      subtitle: 'Cinematic Choice Game',
-      description: 'Which fictional universe represents us? Explore Attack on Titan, Stranger Things, Telugu Cinema, and Spider-Man.',
-      badge: 'Multiverse Choice',
-      icon: Clapperboard,
+      id: 'story',
+      title: 'Finish Our Love Story',
+      subtitle: 'Interactive Story Builder',
+      description: 'Step into our romantic story. Make 5 narrative choices across our universe to unlock one of four distinct endings.',
+      badge: 'Story Builder',
+      icon: PenTool,
       color: '#a78bfa',
     },
   ];
@@ -81,21 +78,7 @@ export default function GamesSection({ onDiscoverSecret, discoveredSecretIds = [
           <Gamepad2 size={14} /> FEATURE THREE &bull; ROMANTIC MINI-GAMES
         </span>
 
-        <div className="section-title-wrap">
-          <h2 className="section-title">Games Made For You</h2>
-
-          {/* Hidden Message #5 Trigger */}
-          <button
-            type="button"
-            className={`secret-trigger-btn ${isSecret5Found ? 'secret-trigger-btn--found' : ''}`}
-            onClick={() => onDiscoverSecret('secret-5')}
-            aria-label={isSecret5Found ? 'Secret 5 discovered' : 'Hidden playful note'}
-            title={isSecret5Found ? 'Secret found!' : 'Something playful is hidden here...'}
-          >
-            <Sparkles size={14} className="secret-star-icon" />
-            <span className="secret-pulse-ring" />
-          </button>
-        </div>
+        <h2 className="section-title">Games Made For You</h2>
 
         <p className="section-subtitle">
           Take a sweet break and play these three interactive games crafted to make you smile,
@@ -185,8 +168,8 @@ export default function GamesSection({ onDiscoverSecret, discoveredSecretIds = [
                 {activeGame === 'quiz' && (
                   <HowWellDoYouKnowUs onClose={() => setActiveGame(null)} />
                 )}
-                {activeGame === 'movie' && (
-                  <ChooseOurMovieUniverse onClose={() => setActiveGame(null)} />
+                {activeGame === 'story' && (
+                  <FinishOurLoveStory onClose={() => setActiveGame(null)} />
                 )}
               </div>
             </motion.div>

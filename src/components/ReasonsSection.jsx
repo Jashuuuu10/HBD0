@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Heart, X, ArrowLeft, ArrowRight, Dices, BookOpen, Star, Check } from 'lucide-react';
+import { Heart, X, ArrowLeft, ArrowRight, Dices, BookOpen, Check } from 'lucide-react';
 import { reasonsList } from '../data/reasons';
 
 /**
@@ -18,13 +18,11 @@ import { reasonsList } from '../data/reasons';
  * - Modal with prev/next navigation, escape key handling, close button
  * - Preserves Secret #4 trigger
  */
-export default function ReasonsSection({ onDiscoverSecret, discoveredSecretIds = [] }) {
+export default function ReasonsSection() {
   const [openedIds, setOpenedIds] = useState(() => new Set());
   const [activeReason, setActiveReason] = useState(null);
   const [showReadAll, setShowReadAll] = useState(false);
   const prefersReducedMotion = useReducedMotion();
-
-  const isSecret4Found = discoveredSecretIds.includes('secret-4');
 
   // Open a specific reason and mark as discovered in session
   const openReason = useCallback((reason) => {
@@ -87,21 +85,7 @@ export default function ReasonsSection({ onDiscoverSecret, discoveredSecretIds =
           <Heart size={14} /> 100 LITTLE PIECES OF MY HEART
         </span>
 
-        <div className="section-title-wrap">
-          <h2 className="section-title">100 Little Reasons I Love You</h2>
-
-          {/* Hidden Message #4 Trigger */}
-          <button
-            type="button"
-            className={`secret-trigger-btn ${isSecret4Found ? 'secret-trigger-btn--found' : ''}`}
-            onClick={() => onDiscoverSecret('secret-4')}
-            aria-label={isSecret4Found ? 'Secret 4 discovered' : 'Hidden sweet confession'}
-            title={isSecret4Found ? 'Secret found!' : 'A sweet confession...'}
-          >
-            <Star size={14} className="secret-star-icon" />
-            <span className="secret-pulse-ring" />
-          </button>
-        </div>
+        <h2 className="section-title">100 Little Reasons I Love You</h2>
 
         <p className="section-subtitle">
           100 little things, one endless love — for Manisha. ❤️

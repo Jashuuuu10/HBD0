@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Heart, Sparkles, X, Cake, RotateCcw, Wind } from 'lucide-react';
+import { Heart, Sparkles, X, RotateCcw, Wind } from 'lucide-react';
 import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
 
 /**
@@ -8,35 +8,25 @@ import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
  * TWO-STAGE CINEMATIC SURPRISE EXPERIENCE 🎁
  * ═══════════════════════════════════════════════════════════════════════════
  *
- * STAGE 1 — THE PERSONAL MESSAGE
- * - Dark cinematic overlay with floating stars & pulsing heart
- * - Exact romantic message revealed paragraph by paragraph
- * - Button: "One Last Surprise 🎂" -> transitions to Stage 2
- * - Secret #8 trigger preserved
+ * STAGE 1 — THE PERSONAL LETTER
+ * An intimate, heartfelt love letter connecting our relationship to cinema
+ * (Mikasa/Eren, Eleven/Mike, Roopa/Anandan, MJ/Peter Parker) naturally,
+ * celebrating her smile, cute anger, childish silliness, and peace.
  *
- * STAGE 2 — THE BIRTHDAY CAKE 🎂
- * - Illustrated birthday cake with frosting layers and 5 glowing candles
- * - Clicking/tapping individual candles turns them off with flame fade/shrink
- * - "Blow Out All Candles 💨" button
- * - Space/Enter keyboard support when focused
- * - When all candles off -> celebration burst of stars, hearts & final message
- * - "Celebrate Again" to relight candles and replay
+ * STAGE 2 — THE REBUILT BIRTHDAY CAKE 🎂
+ * Beautifully crafted realistic multi-tier cake (ivory frosting, blush pink,
+ * cherry piping, detailed cake pedestal) with 5 individual interactive candles,
+ * realistic flame fade, "Blow Out All Candles" button, and celebratory reveal.
  */
-export default function SurpriseModal({
-  isOpen,
-  onClose,
-  onDiscoverSecret,
-  discoveredSecretIds = [],
-}) {
-  const [surpriseStage, setSurpriseStage] = useState(1); // 1: Personal Letter | 2: Cake
-  const [candles, setCandles] = useState([true, true, true, true, true]); // 5 candles, true = lit
+export default function SurpriseModal({ isOpen, onClose }) {
+  const [surpriseStage, setSurpriseStage] = useState(1); // 1: Letter | 2: Cake
+  const [candles, setCandles] = useState([true, true, true, true, true]); // 5 candles
   const [celebrationFired, setCelebrationFired] = useState(false);
 
   const prefersReducedMotion = useReducedMotion();
-  const isSecret8Found = discoveredSecretIds.includes('secret-8');
   const cakeContainerRef = useRef(null);
 
-  // Reset when modal closes or opens
+  // Close and reset
   const handleClose = useCallback(() => {
     setSurpriseStage(1);
     setCandles([true, true, true, true, true]);
@@ -66,7 +56,7 @@ export default function SurpriseModal({
     setCelebrationFired(false);
   };
 
-  // Turn off a specific candle
+  // Blow out single candle
   const blowOutCandle = (index) => {
     setCandles((prev) => {
       const next = [...prev];
@@ -80,23 +70,21 @@ export default function SurpriseModal({
     setCandles([false, false, false, false, false]);
   };
 
-  // Check if all candles are extinguished
   const allCandlesOff = candles.every((c) => !c);
 
   useEffect(() => {
     if (allCandlesOff && !celebrationFired) {
       const timer = setTimeout(() => {
         setCelebrationFired(true);
-      }, 500);
+      }, 450);
       return () => clearTimeout(timer);
     }
   }, [allCandlesOff, celebrationFired]);
 
-  // Keyboard accessibility for blowing out candles when in Stage 2
+  // Keyboard accessibility on cake scene
   const handleCakeKeyDown = (e) => {
     if (surpriseStage === 2 && (e.key === ' ' || e.key === 'Enter')) {
       e.preventDefault();
-      // Blow out first lit candle, or all if only one left
       const firstLitIdx = candles.findIndex((c) => c);
       if (firstLitIdx !== -1) {
         blowOutCandle(firstLitIdx);
@@ -111,7 +99,7 @@ export default function SurpriseModal({
       className="surprise-overlay-v2"
       role="dialog"
       aria-modal="true"
-      aria-label="Final Cinematic Surprise"
+      aria-label="Final Birthday Surprise"
     >
       {/* Background ambient stars */}
       <div className="surprise-starfield" aria-hidden="true">
@@ -120,9 +108,9 @@ export default function SurpriseModal({
             key={i}
             className="surprise-star-dot"
             style={{
-              left: `${(i * 17 + 5) % 100}%`,
-              top: `${(i * 23 + 8) % 100}%`,
-              animationDelay: `${(i % 6) * 0.5}s`,
+              left: `${(i * 17 + 7) % 100}%`,
+              top: `${(i * 23 + 11) % 100}%`,
+              animationDelay: `${(i % 5) * 0.6}s`,
             }}
           />
         ))}
@@ -139,253 +127,300 @@ export default function SurpriseModal({
       </button>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          STAGE 1: THE PERSONAL MESSAGE
+          STAGE 1: INTIMATE, NATURAL CINEMATIC LETTER
          ═══════════════════════════════════════════════════════════════════ */}
       {surpriseStage === 1 && (
         <motion.div
-          key="stage-1"
+          key="letter-stage"
           className="surprise-content-box-v2"
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="glass-shine" aria-hidden="true" />
 
-          {/* Glowing Central Heart */}
-          <motion.div
-            className="surprise-heart-halo-v2"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 1.0 }}
-          >
-            <motion.div
-              animate={
-                prefersReducedMotion
-                  ? {}
-                  : { scale: [1, 1.12, 1] }
-              }
-              transition={{
-                duration: 3.2,
-                repeat: Infinity,
-                ease: 'easeInOut',
-              }}
-            >
-              <Heart size={44} fill="#f43f5e" color="#fecdd3" />
-            </motion.div>
-          </motion.div>
-
-          <span className="surprise-stage-badge">A LETTER ACROSS MULTIVERSES</span>
-
-          {/* Staggered Romantic Letter */}
-          <div className="surprise-paragraphs-container">
-            <motion.p
-              className="surprise-p-lead"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-            >
-              Manisha, if I could step into a thousand different movie worlds, I would still look
-              for you in every single one.
-            </motion.p>
-
-            <motion.div
-              className="surprise-parallel-box"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.4 }}
-            >
-              <p className="surprise-parallel-line">
-                <span className="surprise-line-symbol">🧣</span>
-                If you were Mikasa, I would be your Eren.
-              </p>
-              <p className="surprise-parallel-line">
-                <span className="surprise-line-symbol">📻</span>
-                If you were Eleven, I would be your Mike.
-              </p>
-              <p className="surprise-parallel-line">
-                <span className="surprise-line-symbol">🌸</span>
-                If you were Rupa, I would want to be your Anandan.
-              </p>
-              <p className="surprise-parallel-line">
-                <span className="surprise-line-symbol">🕸️</span>
-                And if you were MJ, I would happily be your Peter Parker.
-              </p>
-            </motion.div>
-
-            <motion.p
-              className="surprise-p"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.6 }}
-            >
-              Different stories, different universes, but the same little wish in every one of
-              them: to find you, understand you, make you smile, and keep choosing you.
-            </motion.p>
-
-            <motion.p
-              className="surprise-p"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.8 }}
-            >
-              You are not just my favourite part of a story. You are the person who makes my own
-              life feel like a story worth remembering.
-            </motion.p>
-
-            <motion.p
-              className="surprise-p-climax"
-              initial={{ opacity: 0, y: 14 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 1.0 }}
-            >
-              Happy Birthday, my beautiful Manisha. ❤️
-            </motion.p>
+          {/* Glowing Ambient Badge */}
+          <div className="surprise-letter-header">
+            <span className="surprise-stage-badge">A LETTER FOR YOUR BIRTHDAY</span>
+            <h2 className="surprise-letter-title">Dearest Manisha,</h2>
           </div>
 
-          {/* Secret #8 Trigger */}
-          <div className="surprise-secret-wrap-v2">
-            <button
-              type="button"
-              className={`secret-trigger-btn ${isSecret8Found ? 'secret-trigger-btn--found' : ''}`}
-              onClick={() => onDiscoverSecret('secret-8')}
-              aria-label={isSecret8Found ? 'Final Secret discovered' : 'Hidden cosmic secret'}
-              title={isSecret8Found ? 'Final Secret discovered!' : 'A secret in the climax...'}
+          {/* Letter Body - Generous spacing, readable, natural tone */}
+          <div className="surprise-letter-body">
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.15 }}
             >
-              <Sparkles size={16} className="secret-star-icon" />
-              <span className="secret-pulse-ring" />
-            </button>
+              Whenever I watch great movies, I always catch myself looking for pieces of you.
+              It isn’t that our life is some scripted drama — it’s that genuine love has a way of
+              feeling cinematic even in the quietest, most ordinary hours.
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.3 }}
+            >
+              When Mikasa wraps that red scarf around Eren, or when Eleven reaches across
+              dimensions just to hear Mike’s voice on a static radio, I understand that quiet
+              instinct. It’s that deep, protective feeling I have for you — wanting to shelter your
+              peace, protect your heart, and be the person you can always run to when the world
+              gets too loud.
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.45 }}
+            >
+              And yet, what I cherish most isn’t fiction; it’s our own rooted reality. Like
+              Anand and Roopa sitting over a simple cup of coffee, our <em>chinna chinna vishayalu</em>{' '}
+              are what make my life feel rich. I love your unfiltered laugh that escapes from your
+              belly. I even love that famous little pout when you get annoyed over tiny things —
+              because beneath that fierce pride, your tenderness always slips through.
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.6 }}
+            >
+              Peter Parker carried the whole city on his back, but with MJ, he could finally take off
+              the mask and breathe. That is the greatest gift you give me, Manisha. With you, I never
+              have to pretend or be someone I am not. Sitting beside you in comfortable silence gives
+              me more peace than anywhere else on earth.
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.75 }}
+            >
+              I don’t promise an impossible fairytale without flaws. But I promise to understand
+              you, make time for you, stand firmly in your corner, and cheer for your dreams as you
+              reach for the stars. Every single day, my choice is you.
+            </motion.p>
+
+            <motion.div
+              className="surprise-letter-closing"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.9 }}
+            >
+              <p className="surprise-letter-signoff">Happy Birthday, my beautiful girl, na bangaram. ❤️</p>
+              <span className="surprise-letter-signature">Always yours, with all my love.</span>
+            </motion.div>
           </div>
 
-          {/* Transition Button to Stage 2 */}
+          {/* Button to Stage 2 */}
           <motion.div
             className="surprise-stage1-actions"
-            initial={{ opacity: 0, y: 14 }}
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 1.2 }}
+            transition={{ duration: 0.6, delay: 1.05 }}
           >
             <button
               type="button"
               className="hero-btn-primary-v2 surprise-cta-btn"
               onClick={() => setSurpriseStage(2)}
             >
-              <Cake size={18} />
-              <span>One Last Surprise 🎂</span>
+              <Sparkles size={18} />
+              <span>Make a Birthday Wish 🎂</span>
             </button>
           </motion.div>
         </motion.div>
       )}
 
       {/* ═══════════════════════════════════════════════════════════════════
-          STAGE 2: THE BIRTHDAY CAKE SCENE 🎂
+          STAGE 2: REBUILT REALISTIC BIRTHDAY CAKE EXPERIENCE 🎂
          ═══════════════════════════════════════════════════════════════════ */}
       {surpriseStage === 2 && (
         <motion.div
-          key="stage-2"
-          className="surprise-cake-container"
+          key="cake-stage"
+          className="surprise-cake-container-v2"
           ref={cakeContainerRef}
           tabIndex={0}
           onKeyDown={handleCakeKeyDown}
           initial={{ opacity: 0, scale: 0.94 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="glass-shine" aria-hidden="true" />
+          <div className="cake-spotlight" aria-hidden="true" />
 
-          {/* Ambient Cake Glow */}
-          <div className="cake-ambient-glow" aria-hidden="true" />
+          {/* Headings */}
+          <div className="cake-header-block">
+            <h3 className="cake-main-heading">Make a wish, Manisha.</h3>
+            <p className="cake-sub-heading">Some wishes are too precious to say out loud.</p>
+          </div>
 
-          <span className="cake-top-prompt">
-            Make a little wish, Manisha…
-          </span>
-
-          <h3 className="cake-main-title">
-            {allCandlesOff ? 'Your Wish Has Been Made! ✨' : 'Blow Out The Candles ✨'}
-          </h3>
-
-          <p className="cake-sub-instruction">
-            {allCandlesOff
-              ? 'All candles blown! May your dreams come true.'
-              : 'Tap the candles to blow them out ✨ (or click Blow Out All)'}
-          </p>
-
-          {/* Interactive Illustrated Birthday Cake */}
-          <div className="cake-illustration-wrapper">
-            {/* Candles Row */}
-            <div className="cake-candles-row" role="group" aria-label="Birthday candles">
+          {/* Illustrated Multi-Layer Cake with Pedestal & Interactive Candles */}
+          <div className="cake-stage-art-wrap">
+            {/* Candles Array */}
+            <div className="cake-candles-array" role="group" aria-label="Birthday candles">
               {candles.map((isLit, idx) => (
                 <button
                   key={`candle-${idx}`}
                   type="button"
-                  className={`cake-candle-unit ${isLit ? 'cake-candle-unit--lit' : 'cake-candle-unit--out'}`}
+                  className={`realistic-candle ${isLit ? 'realistic-candle--lit' : 'realistic-candle--out'}`}
                   onClick={() => blowOutCandle(idx)}
-                  aria-label={`Candle ${idx + 1}: ${isLit ? 'Lit. Click to blow out.' : 'Extinguished.'}`}
+                  aria-label={`Candle ${idx + 1}: ${isLit ? 'Lit. Tap to extinguish.' : 'Extinguished.'}`}
                   disabled={!isLit}
                 >
-                  {/* Flame with Glow */}
-                  <div className="candle-flame-wrapper">
-                    <div className={`candle-flame ${isLit ? 'candle-flame--active' : 'candle-flame--smoke'}`}>
-                      <span className="candle-flame-inner" />
-                    </div>
-                    {isLit && <div className="candle-flame-glow" />}
+                  {/* Candle Flame */}
+                  <div className="candle-flame-zone">
+                    {isLit ? (
+                      <div className="realistic-flame">
+                        <span className="flame-outer" />
+                        <span className="flame-inner" />
+                        <span className="flame-halo" />
+                      </div>
+                    ) : (
+                      <div className="realistic-smoke">
+                        <span className="smoke-wisp" />
+                      </div>
+                    )}
                   </div>
 
-                  {/* Candle Wick */}
-                  <div className="candle-wick" />
+                  {/* Wick */}
+                  <div className="candle-wick-realistic" />
 
-                  {/* Candle Body */}
-                  <div
-                    className="candle-stick"
-                    style={{
-                      background: `repeating-linear-gradient(45deg, #f43f5e, #f43f5e 4px, #ffffff 4px, #ffffff 8px)`,
-                    }}
-                  />
+                  {/* Candle Wax Stick (Blush pink & pearl stripes) */}
+                  <div className="candle-body-realistic">
+                    <div className="candle-wax-highlight" />
+                  </div>
                 </button>
               ))}
             </div>
 
-            {/* Cake Tiers (Illustrated with pure SVG & CSS) */}
-            <div className="cake-tier cake-tier--top">
-              <div className="cake-frosting-drips">
-                <span className="frosting-drip" />
-                <span className="frosting-drip" />
-                <span className="frosting-drip" />
-                <span className="frosting-drip" />
-                <span className="frosting-drip" />
-              </div>
-              <div className="cake-sprinkles" aria-hidden="true">
-                <span className="sprinkle sprinkle-1" />
-                <span className="sprinkle sprinkle-2" />
-                <span className="sprinkle sprinkle-3" />
-              </div>
-            </div>
+            {/* SVG Illustrated Multi-Tier Cake with Depth, Stand, and Details */}
+            <svg
+              className="cake-vector-art"
+              viewBox="0 0 380 240"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                {/* Gradients for Cake Stand */}
+                <linearGradient id="standGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#f8fafc" />
+                  <stop offset="60%" stopColor="#cbd5e1" />
+                  <stop offset="100%" stopColor="#94a3b8" />
+                </linearGradient>
 
-            <div className="cake-tier cake-tier--middle">
-              <div className="cake-ribbon">
-                <span>MANISHA ❤️</span>
-              </div>
-            </div>
+                {/* Top Tier (Blush Pink Frosting) */}
+                <linearGradient id="topTierGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fdf2f8" />
+                  <stop offset="40%" stopColor="#fbcfe8" />
+                  <stop offset="100%" stopColor="#f472b6" />
+                </linearGradient>
 
-            <div className="cake-tier cake-tier--bottom">
-              <div className="cake-bottom-decor">
-                <Heart size={14} fill="#f43f5e" color="#f43f5e" />
-                <Heart size={16} fill="#5ce1e6" color="#5ce1e6" />
-                <Heart size={14} fill="#a78bfa" color="#a78bfa" />
-              </div>
-            </div>
+                {/* Middle Tier (Ivory & Warm Cream) */}
+                <linearGradient id="midTierGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ffffff" />
+                  <stop offset="45%" stopColor="#fef3c7" />
+                  <stop offset="100%" stopColor="#fde68a" />
+                </linearGradient>
 
-            {/* Cake Plate Stand */}
-            <div className="cake-plate" />
-            <div className="cake-plate-base" />
+                {/* Bottom Tier (Deep Velvet & Cherry Accents) */}
+                <linearGradient id="botTierGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#fda4af" />
+                  <stop offset="50%" stopColor="#f43f5e" />
+                  <stop offset="100%" stopColor="#be123c" />
+                </linearGradient>
+
+                {/* Shadow Gradient */}
+                <radialGradient id="cakeShadow" cx="50%" cy="50%" r="50%">
+                  <stop offset="0%" stopColor="rgba(0,0,0,0.7)" />
+                  <stop offset="100%" stopColor="transparent" />
+                </radialGradient>
+              </defs>
+
+              {/* Base Drop Shadow on table */}
+              <ellipse cx="190" cy="225" rx="140" ry="12" fill="url(#cakeShadow)" />
+
+              {/* ─── CAKE STAND ─── */}
+              {/* Stand Pedestal Base */}
+              <path
+                d="M135 224C135 218 155 214 190 214C225 214 245 218 245 224L240 228C240 229 215 232 190 232C165 232 140 229 140 228Z"
+                fill="url(#standGrad)"
+              />
+              <path d="M178 214H202L200 188H180L178 214Z" fill="url(#standGrad)" />
+              {/* Stand Plate Top */}
+              <ellipse cx="190" cy="188" rx="165" ry="14" fill="#e2e8f0" />
+              <ellipse cx="190" cy="186" rx="160" ry="12" fill="url(#standGrad)" />
+
+              {/* ─── BOTTOM TIER ─── */}
+              {/* Bottom tier body */}
+              <path
+                d="M50 148C50 148 50 178 50 178C50 190 110 196 190 196C270 196 330 190 330 178C330 178 330 148 330 148Z"
+                fill="url(#botTierGrad)"
+              />
+              {/* Bottom tier top rim */}
+              <ellipse cx="190" cy="148" rx="140" ry="15" fill="#fecdd3" />
+              {/* Bottom tier decorative cherry pearls */}
+              <circle cx="85" cy="178" r="4" fill="#881337" />
+              <circle cx="120" cy="184" r="4" fill="#881337" />
+              <circle cx="155" cy="187" r="4" fill="#881337" />
+              <circle cx="190" cy="188" r="4.5" fill="#881337" />
+              <circle cx="225" cy="187" r="4" fill="#881337" />
+              <circle cx="260" cy="184" r="4" fill="#881337" />
+              <circle cx="295" cy="178" r="4" fill="#881337" />
+
+              {/* ─── MIDDLE TIER ─── */}
+              {/* Middle tier body */}
+              <path
+                d="M85 96C85 96 85 138 85 138C85 148 130 154 190 154C250 154 295 148 295 138C295 138 295 96 295 96Z"
+                fill="url(#midTierGrad)"
+              />
+              {/* Middle tier top rim */}
+              <ellipse cx="190" cy="96" rx="105" ry="12" fill="#fffbeb" />
+              {/* Middle tier decorative scallop piping */}
+              <path
+                d="M85 110Q95 120 105 112Q115 122 125 113Q135 123 145 114Q155 124 165 115Q175 125 185 116Q195 125 205 116Q215 124 225 115Q235 123 245 114Q255 122 265 113Q275 120 285 112Q295 118 295 110"
+                stroke="#f59e0b"
+                strokeWidth="2.5"
+                fill="none"
+              />
+
+              {/* ─── TOP TIER ─── */}
+              {/* Top tier body */}
+              <path
+                d="M120 48C120 48 120 90 120 90C120 98 150 102 190 102C230 102 260 98 260 90C260 90 260 48 260 48Z"
+                fill="url(#topTierGrad)"
+              />
+              {/* Top tier top rim */}
+              <ellipse cx="190" cy="48" rx="70" ry="9" fill="#fdf2f8" />
+              {/* Ivory Frosting Drips on Top Tier */}
+              <path
+                d="M120 52C123 60 126 65 130 55C135 68 140 72 145 56C150 70 158 75 165 57C172 72 180 78 190 58C200 78 208 72 215 57C222 75 230 70 235 56C240 72 245 68 250 55C254 65 257 60 260 52"
+                fill="#ffffff"
+                opacity="0.9"
+              />
+              {/* Golden edible sparkle stars */}
+              <circle cx="150" cy="75" r="2" fill="#fbbf24" />
+              <circle cx="170" cy="82" r="2.5" fill="#fbbf24" />
+              <circle cx="190" cy="85" r="3" fill="#fbbf24" />
+              <circle cx="210" cy="82" r="2.5" fill="#fbbf24" />
+              <circle cx="230" cy="75" r="2" fill="#fbbf24" />
+            </svg>
           </div>
 
-          {/* Cake Control Buttons */}
-          <div className="cake-controls-row">
+          {/* Controls: Blow Out All / Relight / Back */}
+          <div className="cake-action-bar">
             {!allCandlesOff && (
               <button
                 type="button"
-                className="cake-blow-btn"
+                className="cake-blow-btn-v2"
                 onClick={blowOutAllCandles}
               >
                 <Wind size={18} />
@@ -396,68 +431,64 @@ export default function SurpriseModal({
             {allCandlesOff && (
               <button
                 type="button"
-                className="cake-relight-btn"
+                className="cake-relight-btn-v2"
                 onClick={handleRelight}
               >
                 <RotateCcw size={16} />
-                <span>Celebrate Again 🎂</span>
+                <span>Relight Candles 🎂</span>
               </button>
             )}
 
             <button
               type="button"
-              className="cake-return-btn"
+              className="cake-return-btn-v2"
               onClick={handleClose}
             >
               <span>Back to Website</span>
             </button>
           </div>
 
-          {/* Celebratory Particles & Final Reveal Message */}
+          {/* Short, Intimate Final Celebration Reveal Message */}
           <AnimatePresence>
             {allCandlesOff && (
               <motion.div
-                className="cake-celebration-reveal"
-                initial={{ opacity: 0, y: 20 }}
+                className="cake-celebration-box"
+                initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               >
-                {/* Floating particle sparkles */}
-                <div className="celebration-particles" aria-hidden="true">
-                  {[...Array(16)].map((_, i) => (
-                    <span
-                      key={i}
-                      className="celebration-particle"
-                      style={{
-                        left: `${5 + i * 6}%`,
-                        top: `${(i % 4) * 25}%`,
-                        animationDelay: `${(i % 5) * 0.3}s`,
-                      }}
-                    >
-                      {i % 2 === 0 ? '✨' : '❤️'}
-                    </span>
-                  ))}
-                </div>
+                  {!prefersReducedMotion && (
+                    <div className="cake-particles-field" aria-hidden="true">
+                      {[...Array(14)].map((_, i) => (
+                        <span
+                          key={i}
+                          className="cake-confetti-dot"
+                          style={{
+                            left: `${8 + i * 6.5}%`,
+                            top: `${(i % 3) * 20}%`,
+                            animationDelay: `${(i % 4) * 0.25}s`,
+                          }}
+                        >
+                          {i % 2 === 0 ? '✨' : '💖'}
+                        </span>
+                      ))}
+                    </div>
+                  )}
 
-                <div className="cake-final-card">
-                  <div className="cake-final-heart-halo">
-                    <Heart size={36} fill="#f43f5e" color="#fecdd3" />
+                <div className="cake-intimate-wish-card">
+                  <div className="cake-wish-heart-glow">
+                    <Heart size={32} fill="#f43f5e" color="#fecdd3" />
                   </div>
 
-                  <h4 className="cake-final-heading">Make a wish, my love. ❤️</h4>
-
-                  <p className="cake-final-p">
-                    No matter what this new year of your life brings, I hope it brings you more
-                    reasons to smile, more courage to chase your dreams, and more moments that
-                    remind you how deeply you are loved.
+                  <p className="cake-intimate-wish-text">
+                    Wish for everything your heart is quietly hoping for, Manisha.
+                    I hope this next chapter gives you reasons to laugh until your cheeks hurt,
+                    courage for the days that feel heavy, and people who remind you how special
+                    you are. And I hope I get to share many of those little moments with you.
                   </p>
 
-                  <p className="cake-final-p">
-                    And if I get to be part of even a few of those moments, I’ll be grateful.
-                  </p>
-
-                  <p className="cake-final-signature">
-                    Happy Birthday, Manisha. You’ll always have a special place in my heart. ❤️
+                  <p className="cake-intimate-signoff">
+                    Happy Birthday, my love. ❤️
                   </p>
                 </div>
               </motion.div>

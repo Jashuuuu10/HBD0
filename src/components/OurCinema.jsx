@@ -1,25 +1,86 @@
-import { useState, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { Clapperboard, Film, Sparkles, X, ArrowLeft, ArrowRight, Star } from 'lucide-react';
-import { cinemaUniverses } from '../data/cinema';
+import {
+  Clapperboard,
+  Search,
+  Heart,
+  Sparkles,
+  X,
+  ArrowLeft,
+  ArrowRight,
+  Dices,
+  Calendar,
+  Film,
+} from 'lucide-react';
+import { cinemaUniversesList } from '../data/cinemaUniverses';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
- * OUR CINEMA — PARALLEL UNIVERSES 🎞️
+ * OUR CINEMA — PARALLEL UNIVERSES 🎬
  * ═══════════════════════════════════════════════════════════════════════════
- * Replaces the old comic/map experience.
- * Displays four large interactive cinematic glass cards:
- * 1. Eren x Mikasa (Attack on Titan)
- * 2. Mike x Eleven (Stranger Things)
- * 3. Anandan x Rupa (Telugu Cinema)
- * 4. Peter Parker x MJ (Spider-Man)
+ * Subtitle: "Different stories. Different worlds. Somehow, every story reminds me of you."
+ *
+ * Features:
+ * - 36 curated movies & series spanning Telugu, Indian, Hollywood, Anime, Series (1989–2026)
+ * - Category filters: All, Telugu, Indian, International, Anime, Series
+ * - Live search by title or character name
+ * - Timeline toggle (chronological view 1989-2026)
+ * - Interactive Favourites toggle (heart icon on cards)
+ * - "Surprise Me" random movie selector
+ * - Detailed modal with unique personal romantic reflections
+ * - Escape key to close modal
  */
-export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }) {
+export default function OurCinema() {
+  const [activeCategory, setActiveCategory] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [timelineSort, setTimelineSort] = useState(false);
+  const [onlyFavorites, setOnlyFavorites] = useState(false);
+  const [favorites, setFavorites] = useState(() => new Set(['aot', 'sakhi', 'stranger-things', 'sita-ramam']));
   const [selectedUniverse, setSelectedUniverse] = useState(null);
-  const prefersReducedMotion = useReducedMotion();
-  const isSecret2Found = discoveredSecretIds.includes('secret-2');
 
-  // Handle escape key to close active modal
+  const prefersReducedMotion = useReducedMotion();
+
+  const categories = ['All', 'Telugu', 'Indian', 'International', 'Anime', 'Series'];
+
+  // Toggle favorite
+  const toggleFavorite = useCallback((e, id) => {
+    e.stopPropagation();
+    setFavorites((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }, []);
+
+  // Filter and sort items
+  const filteredUniverses = useMemo(() => {
+    return cinemaUniversesList
+      .filter((item) => {
+        const matchesCategory =
+          activeCategory === 'All' || item.category === activeCategory;
+        const matchesSearch =
+          searchQuery.trim() === '' ||
+          item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.characters.toLowerCase().includes(searchQuery.toLowerCase());
+        const matchesFav = onlyFavorites ? favorites.has(item.id) : true;
+
+        return matchesCategory && matchesSearch && matchesFav;
+      })
+      .sort((a, b) => {
+        if (timelineSort) return a.year - b.year;
+        return 0; // default curated order
+      });
+  }, [activeCategory, searchQuery, timelineSort, onlyFavorites, favorites]);
+
+  // Surprise Me handler
+  const handleSurpriseMe = useCallback(() => {
+    const pool = filteredUniverses.length > 0 ? filteredUniverses : cinemaUniversesList;
+    const randomIndex = Math.floor(Math.random() * pool.length);
+    setSelectedUniverse(pool[randomIndex]);
+  }, [filteredUniverses]);
+
+  // Escape key handler
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && selectedUniverse) {
@@ -30,110 +91,208 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [selectedUniverse]);
 
+  // Navigation inside modal
   const currentIndex = selectedUniverse
-    ? cinemaUniverses.findIndex((u) => u.id === selectedUniverse.id)
+    ? filteredUniverses.findIndex((u) => u.id === selectedUniverse.id)
     : -1;
 
   const handleNext = () => {
-    if (currentIndex >= 0 && currentIndex < cinemaUniverses.length - 1) {
-      setSelectedUniverse(cinemaUniverses[currentIndex + 1]);
+    if (currentIndex >= 0 && currentIndex < filteredUniverses.length - 1) {
+      setSelectedUniverse(filteredUniverses[currentIndex + 1]);
     } else {
-      setSelectedUniverse(cinemaUniverses[0]);
+      setSelectedUniverse(filteredUniverses[0]);
     }
   };
 
   const handlePrev = () => {
     if (currentIndex > 0) {
-      setSelectedUniverse(cinemaUniverses[currentIndex - 1]);
+      setSelectedUniverse(filteredUniverses[currentIndex - 1]);
     } else {
-      setSelectedUniverse(cinemaUniverses[cinemaUniverses.length - 1]);
+      setSelectedUniverse(filteredUniverses[filteredUniverses.length - 1]);
     }
   };
 
   return (
-    <section id="our-cinema" className="cinema-section" aria-label="Our Cinema — Parallel Universes">
-      {/* Anchor for backward compatibility with old hero/nav #our-universe */}
+    <section id="our-cinema" className="cinema-section-v2" aria-label="Our Cinema — Parallel Universes">
+      {/* Anchor for backward compatibility */}
       <div id="our-universe" style={{ position: 'relative', top: '-80px' }} />
 
+      {/* Header Banner */}
       <div className="section-header">
         <span className="section-eyebrow">
           <Clapperboard size={14} /> FEATURE ONE &bull; CINEMATIC MULTIVERSE
         </span>
 
-        <div className="section-title-wrap">
-          <h2 className="section-title">Our Cinema — Parallel Universes</h2>
+        <h2 className="section-title">OUR CINEMA — PARALLEL UNIVERSES</h2>
+        <p className="section-subtitle">
+          “Different stories. Different worlds. Somehow, every story reminds me of you.”
+        </p>
 
-          {/* Hidden Message #2 embedded in cinema section */}
-          <button
-            type="button"
-            className={`secret-trigger-btn ${isSecret2Found ? 'secret-trigger-btn--found' : ''}`}
-            onClick={() => onDiscoverSecret('secret-2')}
-            aria-label={isSecret2Found ? 'Secret 2 discovered' : 'Hidden cinematic whisper'}
-            title={isSecret2Found ? 'Secret found!' : 'A whisper between parallel reels...'}
-          >
-            <Star size={14} className="secret-star-icon" />
-            <span className="secret-pulse-ring" />
-          </button>
+        {/* Controls Toolbar: Search, Filters, Favourites, Surprise Me */}
+        <div className="cinema-toolbar">
+          {/* Search Box */}
+          <div className="cinema-search-wrapper">
+            <Search size={16} className="cinema-search-icon" />
+            <input
+              type="text"
+              className="cinema-search-input"
+              placeholder="Search movie or characters (e.g. Sakhi, Mikasa, Geet, Jack)..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search movies or characters"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                className="cinema-search-clear"
+                onClick={() => setSearchQuery('')}
+                aria-label="Clear search"
+              >
+                &times;
+              </button>
+            )}
+          </div>
+
+          {/* Quick Actions */}
+          <div className="cinema-quick-actions">
+            <button
+              type="button"
+              className={`cinema-action-btn ${timelineSort ? 'cinema-action-btn--active' : ''}`}
+              onClick={() => setTimelineSort(!timelineSort)}
+              title="Sort chronologically by release year"
+            >
+              <Calendar size={15} />
+              <span>{timelineSort ? '1989 → 2026' : 'Timeline View'}</span>
+            </button>
+
+            <button
+              type="button"
+              className={`cinema-action-btn ${onlyFavorites ? 'cinema-action-btn--active' : ''}`}
+              onClick={() => setOnlyFavorites(!onlyFavorites)}
+              title="Show only favourited films"
+            >
+              <Heart
+                size={15}
+                fill={onlyFavorites ? '#f43f5e' : 'none'}
+                color={onlyFavorites ? '#f43f5e' : 'currentColor'}
+              />
+              <span>Favourites ({favorites.size})</span>
+            </button>
+
+            <button
+              type="button"
+              className="cinema-action-btn cinema-action-btn--surprise"
+              onClick={handleSurpriseMe}
+              title="Pick a random universe"
+            >
+              <Dices size={15} />
+              <span>Surprise Me</span>
+            </button>
+          </div>
         </div>
 
-        <p className="section-subtitle">
-          If our love lived across four different fictional worlds, this is how I would keep
-          finding and choosing you, Manisha. Click each universe to step inside.
-        </p>
+        {/* Category Filter Pills */}
+        <div className="cinema-category-pills" role="tablist" aria-label="Movie Categories">
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              role="tab"
+              aria-selected={activeCategory === cat}
+              className={`cinema-category-pill ${activeCategory === cat ? 'cinema-category-pill--active' : ''}`}
+              onClick={() => setActiveCategory(cat)}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Results Counter */}
+        <div className="cinema-results-count">
+          Showing <strong>{filteredUniverses.length}</strong> of {cinemaUniversesList.length} cinematic universes
+        </div>
       </div>
 
-      {/* 4 Large Interactive Glass Cards */}
-      <div className="cinema-grid">
-        {cinemaUniverses.map((universe, idx) => {
+      {/* Grid of 36 Cinematic Glass Cards */}
+      <div className="cinema-cards-grid-v2">
+        {filteredUniverses.map((item) => {
+          const isFav = favorites.has(item.id);
+
           return (
             <motion.div
-              key={universe.id}
-              className="cinema-card"
-              onClick={() => setSelectedUniverse(universe)}
-              whileHover={prefersReducedMotion ? {} : { y: -6, scale: 1.015 }}
+              key={item.id}
+              className="cinema-card-v2"
+              onClick={() => setSelectedUniverse(item)}
+              whileHover={prefersReducedMotion ? {} : { y: -5, scale: 1.015 }}
               whileTap={prefersReducedMotion ? {} : { scale: 0.985 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2 }}
               style={{
-                '--universe-accent': universe.accentColor,
-                '--universe-glow': universe.borderGlow,
+                '--item-accent': item.accentColor,
               }}
             >
               <div className="glass-shine" aria-hidden="true" />
 
-              <div
-                className="cinema-card__gradient-bg"
-                style={{ background: universe.gradient }}
-                aria-hidden="true"
-              />
+              {/* Card Header */}
+              <div className="cinema-card-v2__header">
+                <span className="cinema-card-v2__symbol" aria-hidden="true">
+                  {item.symbol}
+                </span>
 
-              <div className="cinema-card__header">
-                <span className="cinema-card__tag">
-                  <Film size={12} /> {universe.cinematicTag}
-                </span>
-                <span className="cinema-card__symbol" aria-hidden="true">
-                  {universe.symbol}
-                </span>
+                <div className="cinema-card-v2__badges">
+                  <span className="cinema-card-v2__cat">{item.category}</span>
+                  <span className="cinema-card-v2__year">{item.year}</span>
+                </div>
+
+                {/* Heart / Favourite Button */}
+                <button
+                  type="button"
+                  className={`cinema-card-v2__fav-btn ${isFav ? 'cinema-card-v2__fav-btn--active' : ''}`}
+                  onClick={(e) => toggleFavorite(e, item.id)}
+                  aria-label={isFav ? `Remove ${item.title} from favourites` : `Add ${item.title} to favourites`}
+                >
+                  <Heart size={15} fill={isFav ? '#f43f5e' : 'none'} color={isFav ? '#f43f5e' : 'rgba(255,255,255,0.7)'} />
+                </button>
               </div>
 
-              <div className="cinema-card__body">
-                <span className="cinema-card__badge">{universe.badge}</span>
-                <h3 className="cinema-card__pair">{universe.pair}</h3>
-                <p className="cinema-card__franchise">{universe.franchise}</p>
-                <blockquote className="cinema-card__theme">
-                  “{universe.theme}”
-                </blockquote>
+              {/* Title & Characters */}
+              <div className="cinema-card-v2__body">
+                <h3 className="cinema-card-v2__title">{item.title}</h3>
+                <span className="cinema-card-v2__characters">{item.characters}</span>
+                <p className="cinema-card-v2__tagline">“{item.tagline}”</p>
+                <p className="cinema-card-v2__interp">{item.interpretation}</p>
               </div>
 
-              <div className="cinema-card__footer">
-                <span className="cinema-card__cta">
-                  Step Inside Story <ArrowRight size={14} />
+              {/* Card Footer Action */}
+              <div className="cinema-card-v2__footer">
+                <span className="cinema-card-v2__action">
+                  <span>Read Parallel Reflection</span>
+                  <ArrowRight size={13} />
                 </span>
-                <span className="cinema-card__num">0{idx + 1}</span>
               </div>
             </motion.div>
           );
         })}
       </div>
+
+      {/* No results fallback */}
+      {filteredUniverses.length === 0 && (
+        <div className="cinema-no-results">
+          <Film size={36} className="cinema-no-results-icon" />
+          <h4>No cinematic universes found</h4>
+          <p>Try searching for a different title or resetting your category filters.</p>
+          <button
+            type="button"
+            className="hero-btn-primary-v2"
+            onClick={() => {
+              setActiveCategory('All');
+              setSearchQuery('');
+              setOnlyFavorites(false);
+            }}
+          >
+            Reset Filters
+          </button>
+        </div>
+      )}
 
       {/* Cinematic Detail Modal */}
       <AnimatePresence>
@@ -151,10 +310,9 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
               initial={{ opacity: 0, scale: 0.94, y: 24 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.94, y: 20 }}
-              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
               style={{
                 '--universe-accent': selectedUniverse.accentColor,
-                '--universe-glow': selectedUniverse.borderGlow,
               }}
             >
               <div className="glass-shine" aria-hidden="true" />
@@ -162,20 +320,23 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
               {/* Modal Header */}
               <div className="cinema-modal-header">
                 <div className="cinema-modal-header__left">
-                  <span className="cinema-modal-symbol" aria-hidden="true">
-                    {selectedUniverse.symbol}
-                  </span>
-                  <div>
-                    <span className="cinema-modal-badge">{selectedUniverse.cinematicTag}</span>
-                    <h3 id="cinema-modal-title" className="cinema-modal-title">
-                      {selectedUniverse.pair}
-                    </h3>
+                  <div className="cinema-modal-header-meta">
+                    <span className="cinema-modal-symbol" aria-hidden="true">
+                      {selectedUniverse.symbol}
+                    </span>
+                    <span className="cinema-modal-badge">{selectedUniverse.category} &bull; {selectedUniverse.year}</span>
                   </div>
+                  <h3 id="cinema-modal-title" className="cinema-modal-title">
+                    {selectedUniverse.title}
+                  </h3>
+                  <span className="cinema-modal-char-names">
+                    {selectedUniverse.characters}
+                  </span>
                 </div>
 
                 <button
                   type="button"
-                  className="star-detail-card__close"
+                  className="game-modal-close-btn-v2"
                   onClick={() => setSelectedUniverse(null)}
                   aria-label="Close cinematic universe view"
                 >
@@ -183,35 +344,30 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
                 </button>
               </div>
 
-              {/* Modal Content - Scrollable */}
+              {/* Modal Scrollable Content */}
               <div className="cinema-modal-content">
-                <div className="cinema-modal-franchise-bar">
-                  <span>{selectedUniverse.franchise}</span>
-                  <span className="cinema-modal-badge-alt">{selectedUniverse.badge}</span>
-                </div>
-
-                {/* Theme banner */}
                 <div className="cinema-modal-theme-box">
                   <Sparkles size={18} className="cinema-modal-sparkle" />
-                  <p className="cinema-modal-theme-text">
-                    “{selectedUniverse.theme}”
-                  </p>
+                  <div>
+                    <h4 className="cinema-modal-tagline-title">{selectedUniverse.tagline}</h4>
+                    <p className="cinema-modal-theme-text">
+                      “{selectedUniverse.interpretation}”
+                    </p>
+                  </div>
                 </div>
 
-                {/* Personal romantic reflections */}
+                {/* Unique Personal Romantic Reflection */}
                 <div className="cinema-modal-reflection">
                   <h4 className="cinema-modal-subheading">
-                    Why This Universe Reminds Me of You, Manisha:
+                    How This Story Reminds Me of You, Manisha:
                   </h4>
-                  {selectedUniverse.personalReflection.map((paragraph, i) => (
-                    <p key={i} className="cinema-modal-p">
-                      {paragraph}
-                    </p>
-                  ))}
+                  <p className="cinema-modal-p">
+                    {selectedUniverse.message}
+                  </p>
                 </div>
               </div>
 
-              {/* Modal Footer */}
+              {/* Modal Footer Navigation */}
               <div className="cinema-modal-footer">
                 <div className="cinema-modal-nav-btns">
                   <button
@@ -221,8 +377,11 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
                     aria-label="Previous Universe"
                   >
                     <ArrowLeft size={16} />
-                    <span>Previous</span>
+                    <span>Prev</span>
                   </button>
+                  <span className="cinema-modal-nav-pos">
+                    {currentIndex + 1} / {filteredUniverses.length}
+                  </span>
                   <button
                     type="button"
                     className="cinema-nav-btn"
@@ -239,7 +398,7 @@ export default function OurCinema({ onDiscoverSecret, discoveredSecretIds = [] }
                   className="cinema-done-btn"
                   onClick={() => setSelectedUniverse(null)}
                 >
-                  Return to Our World
+                  Return to Our Cinema
                 </button>
               </div>
             </motion.div>
