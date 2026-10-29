@@ -23,12 +23,12 @@ export default function Navbar({ onOpenSurprise, onOpenLetter }) {
   const [activeSection, setActiveSection] = useState('hero');
 
   const navItems = [
-    { label: 'For Manisha', href: '#hero' },
     { label: 'Home', href: '#hero' },
     { label: 'Our Story', href: '#our-story' },
     { label: 'Our Cinema', href: '#our-cinema' },
     { label: '100 Reasons', href: '#reasons' },
-    { label: 'Memories', href: '#little-things' },
+    { label: 'Gallery', href: '#memories' },
+    { label: 'Little Things', href: '#little-things' },
     { label: 'Games', href: '#games' },
     { label: 'Make a Wish', href: '#make-a-wish' },
   ];

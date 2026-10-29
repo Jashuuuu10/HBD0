@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Heart, X, ArrowLeft, ArrowRight, Dices, BookOpen, Check } from 'lucide-react';
 import { reasonsList } from '../data/reasons';
+import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -23,6 +24,16 @@ export default function ReasonsSection() {
   const [activeReason, setActiveReason] = useState(null);
   const [showReadAll, setShowReadAll] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  // Lock body scroll when any reasons modal is open
+  useEffect(() => {
+    if (activeReason || showReadAll) {
+      lockBodyScroll();
+      return () => {
+        unlockBodyScroll();
+      };
+    }
+  }, [activeReason, showReadAll]);
 
   // Open a specific reason and mark as discovered in session
   const openReason = useCallback((reason) => {
@@ -193,7 +204,7 @@ export default function ReasonsSection() {
 
                 <button
                   type="button"
-                  className="star-detail-card__close"
+                  className="game-modal-close-btn-v2"
                   onClick={() => setActiveReason(null)}
                   aria-label="Close reason modal"
                 >
@@ -288,7 +299,7 @@ export default function ReasonsSection() {
 
                 <button
                   type="button"
-                  className="star-detail-card__close"
+                  className="game-modal-close-btn-v2"
                   onClick={() => setShowReadAll(false)}
                   aria-label="Close all reasons view"
                 >

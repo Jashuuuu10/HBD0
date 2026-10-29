@@ -20,21 +20,28 @@ export const storyDecisions = [
         id: 'c1_rain',
         label: 'A sudden monsoon shower under a shared chai stall',
         narrative:
-          'Rain poured from grey clouds, trapping us under a small roadside awning. Over hot ginger chai and dripping umbrellas, a casual conversation turned into an unexpected connection.',
+          'Rain poured from grey clouds, trapping us under a small roadside awning. Over hot ginger chai and dripping umbrellas, a quiet conversation turned into an unexpected, warm connection.',
         trait: 'quiet',
       },
       {
         id: 'c1_station',
-        label: 'A crowded train station where our eyes locked',
+        label: 'A crowded train station where our eyes locked across the platform',
         narrative:
-          'Amidst the rush of arriving trains and echoing announcements, we caught each other’s gaze. In that split second, the noise of the station dissolved into slow motion.',
+          'Amidst the rush of arriving trains and echoing announcements, we caught each other’s gaze. In that split second, as if pulled by cosmic gravity, the noise of the station dissolved into pure stillness.',
+        trait: 'universe',
+      },
+      {
+        id: 'c1_cinema',
+        label: 'A midnight film screening standing in line sharing popcorn',
+        narrative:
+          'We both reached for the same ticket counter, started debating the trailer, and laughed at how quickly time flew before the movie even started.',
         trait: 'cinema',
       },
       {
         id: 'c1_book',
-        label: 'A quiet library corner reaching for the same story',
+        label: 'A quiet library corner reaching for the same book',
         narrative:
-          'Our hands brushed over a vintage film book on a forgotten wooden shelf. A shy smile and a whisper started a conversation that lasted until closing time.',
+          'Our hands brushed over a classic story on a forgotten wooden shelf. A shy smile and a whisper started a conversation that lasted until closing time.',
         trait: 'growth',
       },
     ],
@@ -46,25 +53,32 @@ export const storyDecisions = [
       'The initial polite greetings quickly gave way to something much deeper. What did we stay up talking about?',
     choices: [
       {
-        id: 'c2_dreams',
-        label: 'Our childhood ambitions and what scares us about the future',
-        narrative:
-          'We talked about our quiet insecurities, our secret goals, and the courage it takes to pursue dreams. For the first time, being vulnerable felt completely safe.',
-        trait: 'growth',
-      },
-      {
-        id: 'c2_movies',
-        label: 'Debating our favourite movie endings and crazy "what-if" theories',
-        narrative:
-          'We fiercely defended our favourite film characters, laughed at Tollywood drama tropes, and realized our sense of humor matched like two matching puzzle pieces.',
-        trait: 'cinema',
-      },
-      {
         id: 'c2_ordinary',
         label: 'The simple, ordinary things that make us feel at peace',
         narrative:
           'We talked about morning walks, comfort food, and the warmth of home. We realized that neither of us wanted flashy fairytales; we wanted genuine companionship.',
         trait: 'quiet',
+      },
+      {
+        id: 'c2_multiverse',
+        label: 'Crazy "what-if" theories and parallel timeline destinies',
+        narrative:
+          'We wondered if two souls can be destined to find each other in every dimension, feeling this strange, comforting sense of having known each other forever.',
+        trait: 'universe',
+      },
+      {
+        id: 'c2_movies',
+        label: 'Debating our favourite movie endings and dramatic plot twists',
+        narrative:
+          'We fiercely defended our favourite film characters, laughed at dramatic tropes, and realized our sense of humor matched like two matching puzzle pieces.',
+        trait: 'cinema',
+      },
+      {
+        id: 'c2_dreams',
+        label: 'Our childhood ambitions and what scares us about the future',
+        narrative:
+          'We talked about our quiet insecurities, our secret goals, and the courage it takes to pursue dreams. For the first time, being vulnerable felt completely safe.',
+        trait: 'growth',
       },
     ],
   },
@@ -80,6 +94,13 @@ export const storyDecisions = [
         narrative:
           'No interrogations, no pressure to perform. Just a warm shoulder to lean on, a gentle hand squeeze, and holding space until the storm passed.',
         trait: 'quiet',
+      },
+      {
+        id: 'c3_universe',
+        label: 'Sending a late-night note reminding her she is my entire universe',
+        narrative:
+          'A quiet message across the distance: "Whatever comes, you are never alone. I am always in your corner, across every storm."',
+        trait: 'universe',
       },
       {
         id: 'c3_surprise',
@@ -104,25 +125,32 @@ export const storyDecisions = [
       'We are both strong-minded individuals. When friction sparked, what chose to win: ego or love?',
     choices: [
       {
-        id: 'c4_listen',
-        label: 'Stepping back to listen and offering a soft "I am sorry, you matter more"',
-        narrative:
-          'We took a breath, put away pride, and listened to what the other person was feeling beneath the anger. That quiet apology melted the frost instantly.',
-        trait: 'growth',
-      },
-      {
         id: 'c4_hug',
-        label: 'A sudden tight hug that breaks the tension into laughter',
+        label: 'A sudden tight hug that breaks the tension into quiet peace',
         narrative:
-          'Right in the middle of a serious argument, one look at each other’s dramatic faces made us laugh. A warm hug sealed the truce without words.',
+          'Right in the middle of a serious moment, one look at each other melted the frost. A warm, reassuring hug sealed the truce without words.',
         trait: 'quiet',
       },
       {
         id: 'c4_multiverse',
         label: 'Reminding each other: "Even in another timeline, I’d still choose you"',
         narrative:
-          'A gentle, teasing reminder of the bigger picture. We aren’t competing against each other; we are in this together across every reality.',
+          'A gentle, perspective-shifting reminder. We aren’t competing against each other; we are in this together across every reality.',
         trait: 'universe',
+      },
+      {
+        id: 'c4_tease',
+        label: 'A dramatic mock-serious pout that makes both of us burst into laughter',
+        narrative:
+          'One exaggerated expression, a dramatic movie-style gasp, and both of us couldn’t keep a straight face anymore. Laughter washed away the pride.',
+        trait: 'cinema',
+      },
+      {
+        id: 'c4_listen',
+        label: 'Stepping back to listen and offering a soft "I am sorry, you matter more"',
+        narrative:
+          'We took a breath, put away pride, and listened to what the other person was feeling beneath the surface. That quiet apology restored harmony.',
+        trait: 'growth',
       },
     ],
   },
@@ -140,11 +168,18 @@ export const storyDecisions = [
         trait: 'quiet',
       },
       {
+        id: 'c5_cosmos',
+        label: 'To keep believing that our love was written in the cosmos',
+        narrative:
+          'Like Eren and Mikasa or Mike and Eleven, knowing that whatever challenges the future holds, our hearts will always find their way back together.',
+        trait: 'universe',
+      },
+      {
         id: 'c5_adventure',
         label: 'To keep our sense of wonder alive and celebrate life like cinematic art',
         narrative:
           'To travel, laugh loudly, celebrate each other’s quirks, and keep life feeling like our private, magical movie.',
-        trait: 'universe',
+        trait: 'cinema',
       },
       {
         id: 'c5_champion',

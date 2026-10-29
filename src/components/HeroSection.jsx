@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useReducedMotion } from 'framer-motion';
 import { Heart, Sparkles, Compass } from 'lucide-react';
 
 /**
@@ -24,12 +24,12 @@ export default function HeroSection({ onOpenSurprise }) {
     }
   };
 
-  const decorativeTags = ['DEVOTION', 'LAUGHTER', 'ADVENTURE', 'PEACE', 'FOREVER'];
+  const decorativeTags = ['I', 'LOVE', 'U', 'SO', 'MUCH♥️'];
 
   const thumbnails = [
-    { id: 0, src: '/assets/manisha.jpg', alt: 'Manisha portrait' },
-    { id: 1, src: '/assets/aot.PNG', alt: 'AOT Vista theme' },
-    { id: 2, src: '/assets/manisha.jpg', alt: 'Celebration moment' },
+    { id: 0, src: '/assets/IMG_8259 2.jpg', alt: 'Manisha portrait' },
+    { id: 1, src: '/assets/IMG_4341.jpg', alt: 'AOT Vista theme' },
+    { id: 2, src: '/assets/IMG_0774.jpg', alt: 'Celebration moment' },
   ];
 
   return (

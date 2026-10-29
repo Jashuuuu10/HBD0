@@ -42,6 +42,9 @@ class CDPClient {
       this.ws.onerror = reject;
       this.ws.onmessage = (event) => {
         const msg = JSON.parse(event.data);
+        if (msg.method === 'Runtime.exceptionThrown') {
+          console.error('BROWSER RUNTIME ERROR:', msg.params.exceptionDetails?.exception?.description || msg.params.exceptionDetails?.text);
+        }
         if (msg.id && this.callbacks.has(msg.id)) {
           const { resolve: res, reject: rej } = this.callbacks.get(msg.id);
           this.callbacks.delete(msg.id);
@@ -112,27 +115,54 @@ async function run() {
 
     // 1. Wait for Stage 2 & Advance to Stage 3
     console.log('Waiting for Stage 2 card...');
-    for (let i = 0; i < 20; i++) {
+    let stage2Mounted = false;
+    for (let i = 0; i < 30; i++) {
       await delay(500);
-      const hasStage2 = await client.eval(`!!document.querySelector('.stage-2-card')`);
-      if (hasStage2) break;
+      stage2Mounted = await client.eval(`!!document.querySelector('.stage-2-card')`);
+      if (stage2Mounted) {
+        console.log(`Stage 2 card ready at ${(i * 0.5).toFixed(1)}s`);
+        break;
+      }
+    }
+    if (!stage2Mounted) throw new Error('Stage 2 card did not mount in time');
+
+    await delay(1200); // Allow card entry animation to settle
+    console.log('Clicking "Enter Your World" button...');
+    const clickMsg = await client.eval(`(() => {
+      const btn = document.querySelector('.stage-2-card__btn');
+      if (btn) {
+        btn.click();
+        return 'BUTTON_CLICKED: ' + btn.innerText;
+      }
+      return 'BUTTON_NOT_FOUND';
+    })()`);
+    console.log('Click result:', clickMsg);
+
+    // Wait for Stage 3 to mount
+    let stage3Mounted = false;
+    for (let i = 0; i < 30; i++) {
+      await delay(400);
+      stage3Mounted = await client.eval(`!!document.querySelector('.stage-3-page')`);
+      if (stage3Mounted) {
+        console.log(`Stage 3 mounted successfully at ${(i * 0.4).toFixed(1)}s!`);
+        break;
+      }
+    }
+    if (!stage3Mounted) {
+      const bodyHtml = await client.eval(`document.body.innerHTML.substring(0, 300)`);
+      throw new Error(`Stage 3 did not mount. Current body: ${bodyHtml}`);
     }
 
-    console.log('Clicking "Enter Your World" to enter Stage 3...');
-    await client.eval(`document.querySelector('.stage-2-card__btn')?.click()`);
-    await delay(1200);
-
-    const isStage3Mounted = await client.eval(`!!document.querySelector('.stage-3-page')`);
-    console.log('Stage 3 mounted:', isStage3Mounted);
+    await delay(1200); // Allow stage 3 entry to settle
 
     // 2. Test Our Cinema — Parallel Universes
     console.log('Testing Our Cinema...');
-    const cinemaCardsCount = await client.eval(`document.querySelectorAll('.cinema-card').length`);
+    const cinemaCardsCount = await client.eval(`document.querySelectorAll('.cinema-card-v2').length`);
     console.log('Our Cinema cards rendered:', cinemaCardsCount);
-    if (cinemaCardsCount !== 4) throw new Error(`Expected 4 cinema cards, got ${cinemaCardsCount}`);
+    if (cinemaCardsCount < 30) throw new Error(`Expected at least 30 cinema cards, got ${cinemaCardsCount}`);
 
-    // Click first cinema card (AOT)
-    await client.eval(`document.querySelectorAll('.cinema-card')[0]?.click()`);
+    // Click first cinema card
+    await client.eval(`document.querySelectorAll('.cinema-card-v2')[0]?.click()`);
     await delay(600);
     const cinemaModalTitle = await client.eval(`document.querySelector('.cinema-modal-title')?.innerText`);
     console.log('Cinema modal open:', cinemaModalTitle);
@@ -170,7 +200,7 @@ async function run() {
     console.log('Reason 2 title:', reason2Title);
 
     // Close reason modal
-    await client.eval(`document.querySelector('.reason-modal-header .star-detail-card__close')?.click()`);
+    await client.eval(`document.querySelector('.reason-modal-header .game-modal-close-btn-v2')?.click()`);
     await delay(400);
 
     // Test Surprise Me button
@@ -178,7 +208,7 @@ async function run() {
     await delay(500);
     const randomReasonTitle = await client.eval(`document.querySelector('.reason-modal-title')?.innerText`);
     console.log('Surprise Me opened random reason:', randomReasonTitle);
-    await client.eval(`document.querySelector('.reason-modal-header .star-detail-card__close')?.click()`);
+    await client.eval(`document.querySelector('.reason-modal-header .game-modal-close-btn-v2')?.click()`);
     await delay(400);
 
     // Test Read All 100 reasons modal
@@ -187,7 +217,7 @@ async function run() {
     const readAllItemsCount = await client.eval(`document.querySelectorAll('.readall-reason-item').length`);
     console.log('Read All modal items rendered:', readAllItemsCount);
     if (readAllItemsCount !== 100) throw new Error(`Expected 100 items in Read All, got ${readAllItemsCount}`);
-    await client.eval(`document.querySelector('.readall-modal-header .star-detail-card__close')?.click()`);
+    await client.eval(`document.querySelector('.readall-modal-header .game-modal-close-btn-v2')?.click()`);
     await delay(400);
 
     // 4. Test Game A: Mission Find My Heart
@@ -233,18 +263,25 @@ async function run() {
     await client.eval(`document.querySelector('.game-modal-close-btn-v2')?.click()`);
     await delay(400);
 
-    // 6. Test Game C: Choose Our Movie Universe
-    console.log('Testing Game C: Choose Our Movie Universe...');
+    // 6. Test Game C: Finish Our Love Story
+    console.log('Testing Game C: Finish Our Love Story...');
     await client.eval(`document.querySelectorAll('.game-card__play-btn')[2]?.click()`);
     await delay(600);
-    const choiceCardsCount = await client.eval(`document.querySelectorAll('.choice-card-item').length`);
-    console.log('Choice cards count:', choiceCardsCount);
+    const storyPrompt1 = await client.eval(`document.querySelector('.story-step-prompt')?.innerText`);
+    console.log('Story Step 1 Prompt:', storyPrompt1);
 
-    // Select Spider-Man option
-    await client.eval(`document.querySelectorAll('.choice-card-item')[3]?.click()`);
-    await delay(500);
-    const revealedUniverseTitle = await client.eval(`document.querySelector('.choice-revealed-title')?.innerText`);
-    console.log('Revealed choice universe:', revealedUniverseTitle);
+    // Step through the 5 chapters
+    for (let step = 0; step < 5; step++) {
+      // Pick first choice
+      await client.eval(`document.querySelectorAll('.story-choice-btn')[0]?.click()`);
+      await delay(300);
+      // Click continue / reveal
+      await client.eval(`document.querySelector('.story-next-btn')?.click()`);
+      await delay(400);
+    }
+
+    const endingTitle = await client.eval(`document.querySelector('.story-ending-title')?.innerText`);
+    console.log('Story Ending Earned:', endingTitle);
     await client.screenshot('verify_game_c.png');
 
     // Close Game C
@@ -256,48 +293,48 @@ async function run() {
     await client.eval(`document.querySelector('.navbar-v2__surprise-btn')?.click()`);
     await delay(800);
 
-    const surpriseLeadText = await client.eval(`document.querySelector('.surprise-p-lead')?.innerText`);
-    console.log('Surprise Stage 1 letter lead:', surpriseLeadText);
+    const surpriseLeadText = await client.eval(`document.querySelector('.surprise-letter-title')?.innerText`);
+    console.log('Surprise Stage 1 letter salutation:', surpriseLeadText);
     await client.screenshot('verify_surprise_stage1.png');
 
-    // Click "One Last Surprise 🎂" to enter Stage 2 (Cake)
+    // Click "Make a Birthday Wish 🎂" to enter Stage 2 (Cake)
     console.log('Transitioning to Stage 2 Birthday Cake...');
     await client.eval(`document.querySelector('.surprise-cta-btn')?.click()`);
     await delay(800);
 
-    const cakeTitle = await client.eval(`document.querySelector('.cake-main-title')?.innerText`);
+    const cakeTitle = await client.eval(`document.querySelector('.cake-main-heading')?.innerText`);
     console.log('Cake scene title:', cakeTitle);
-    const initialLitCandles = await client.eval(`document.querySelectorAll('.cake-candle-unit--lit').length`);
+    const initialLitCandles = await client.eval(`document.querySelectorAll('.realistic-candle--lit').length`);
     console.log('Initial lit candles:', initialLitCandles);
     if (initialLitCandles !== 5) throw new Error(`Expected 5 lit candles, got ${initialLitCandles}`);
     await client.screenshot('verify_cake_lit.png');
 
     // Tap first candle to blow it out individually
     console.log('Tapping candle 1 to blow it out individually...');
-    await client.eval(`document.querySelectorAll('.cake-candle-unit')[0]?.click()`);
+    await client.eval(`document.querySelectorAll('.realistic-candle')[0]?.click()`);
     await delay(400);
-    const remainingLitCandles = await client.eval(`document.querySelectorAll('.cake-candle-unit--lit').length`);
+    const remainingLitCandles = await client.eval(`document.querySelectorAll('.realistic-candle--lit').length`);
     console.log('Remaining lit candles after 1 tap:', remainingLitCandles);
     if (remainingLitCandles !== 4) throw new Error(`Expected 4 remaining candles, got ${remainingLitCandles}`);
 
     // Click "Blow Out All Candles 💨"
     console.log('Clicking "Blow Out All Candles 💨"...');
-    await client.eval(`document.querySelector('.cake-blow-btn')?.click()`);
+    await client.eval(`document.querySelector('.cake-blow-btn-v2')?.click()`);
     await delay(1200);
 
-    const finalLitCandles = await client.eval(`document.querySelectorAll('.cake-candle-unit--lit').length`);
+    const finalLitCandles = await client.eval(`document.querySelectorAll('.realistic-candle--lit').length`);
     console.log('Lit candles after blowout:', finalLitCandles);
     if (finalLitCandles !== 0) throw new Error('Expected 0 lit candles');
 
-    const celebrationMessage = await client.eval(`document.querySelector('.cake-final-heading')?.innerText`);
-    console.log('Celebration final message heading:', celebrationMessage);
+    const celebrationMessage = await client.eval(`document.querySelector('.cake-intimate-wish-text')?.innerText`);
+    console.log('Celebration intimate wish text:', celebrationMessage);
     await client.screenshot('verify_cake_celebration.png');
 
-    // Test "Celebrate Again 🎂" to relight candles
-    console.log('Testing "Celebrate Again" to relight candles...');
-    await client.eval(`document.querySelector('.cake-relight-btn')?.click()`);
+    // Test "Relight Candles 🎂" to relight candles
+    console.log('Testing "Relight Candles" to relight candles...');
+    await client.eval(`document.querySelector('.cake-relight-btn-v2')?.click()`);
     await delay(500);
-    const relitCandles = await client.eval(`document.querySelectorAll('.cake-candle-unit--lit').length`);
+    const relitCandles = await client.eval(`document.querySelectorAll('.realistic-candle--lit').length`);
     console.log('Candles relit count:', relitCandles);
     if (relitCandles !== 5) throw new Error(`Expected 5 relit candles, got ${relitCandles}`);
 

@@ -126,9 +126,8 @@ export default function SurpriseModal({ isOpen, onClose }) {
         <X size={22} />
       </button>
 
-      {/* ═══════════════════════════════════════════════════════════════════
-          STAGE 1: INTIMATE, NATURAL CINEMATIC LETTER
-         ═══════════════════════════════════════════════════════════════════ */}
+      
+      {/* STAGE 1: PERSONAL LETTER */}
       {surpriseStage === 1 && (
         <motion.div
           key="letter-stage"
@@ -140,13 +139,13 @@ export default function SurpriseModal({ isOpen, onClose }) {
         >
           <div className="glass-shine" aria-hidden="true" />
 
-          {/* Glowing Ambient Badge */}
           <div className="surprise-letter-header">
-            <span className="surprise-stage-badge">A LETTER FOR YOUR BIRTHDAY</span>
+            <span className="surprise-stage-badge">
+              A LETTER FOR YOUR BIRTHDAY
+            </span>
             <h2 className="surprise-letter-title">Dearest Manisha,</h2>
           </div>
 
-          {/* Letter Body - Generous spacing, readable, natural tone */}
           <div className="surprise-letter-body">
             <motion.p
               className="surprise-letter-p"
@@ -154,9 +153,11 @@ export default function SurpriseModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
             >
-              Whenever I watch great movies, I always catch myself looking for pieces of you.
-              It isn’t that our life is some scripted drama — it’s that genuine love has a way of
-              feeling cinematic even in the quietest, most ordinary hours.
+              My dearest Manisha, ❤️🥹 Sometimes I wonder how one person can
+              mean so much to another. Your smile makes my worst days feel
+              lighter, your voice calms my mind, and knowing you're in my life
+              makes everything more beautiful. 🌷🤍 I can't imagine my life
+              without you. 🫶🏻💗
             </motion.p>
 
             <motion.p
@@ -165,11 +166,12 @@ export default function SurpriseModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
             >
-              When Mikasa wraps that red scarf around Eren, or when Eleven reaches across
-              dimensions just to hear Mike’s voice on a static radio, I understand that quiet
-              instinct. It’s that deep, protective feeling I have for you — wanting to shelter your
-              peace, protect your heart, and be the person you can always run to when the world
-              gets too loud.
+              If you could see yourself through my eyes, you'd understand why
+              I fall for you a little more every day. 🥹💘 I love your smile,
+              expressions, laugh, childish and naughty side, your anger, and
+              that adorable little pout when you're annoyed. 😂❤️ I love all
+              of you, exactly as you are. You never have to be perfect to be
+              precious to me. 🫂💕
             </motion.p>
 
             <motion.p
@@ -178,11 +180,12 @@ export default function SurpriseModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.45 }}
             >
-              And yet, what I cherish most isn’t fiction; it’s our own rooted reality. Like
-              Anand and Roopa sitting over a simple cup of coffee, our <em>chinna chinna vishayalu</em>{' '}
-              are what make my life feel rich. I love your unfiltered laugh that escapes from your
-              belly. I even love that famous little pout when you get annoyed over tiny things —
-              because beneath that fierce pride, your tenderness always slips through.
+              You're my favourite part of every day. 💗✨ You're the first
+              person I want to tell my stories to, the person whose messages
+              can change my mood, and the person I miss even when we've only
+              been apart for a little while. 🥺💌 I want more conversations,
+              silly arguments that end in smiles, hugs that make everything
+              feel okay, and memories that belong only to us. ❤️‍🩹🌸
             </motion.p>
 
             <motion.p
@@ -191,10 +194,12 @@ export default function SurpriseModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.6 }}
             >
-              Peter Parker carried the whole city on his back, but with MJ, he could finally take off
-              the mask and breathe. That is the greatest gift you give me, Manisha. With you, I never
-              have to pretend or be someone I am not. Sitting beside you in comfortable silence gives
-              me more peace than anywhere else on earth.
+              With you, I want to be someone you can always be yourself
+              around. 🤍 You don't have to hide your tears, fears, or
+              insecurities. I want to understand you, hold you close when life
+              feels heavy, and remind you how special you are whenever you
+              forget. Your happiness and dreams matter to me because you
+              matter to me. 🌷🫶🏻
             </motion.p>
 
             <motion.p
@@ -203,28 +208,76 @@ export default function SurpriseModal({ isOpen, onClose }) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.75 }}
             >
-              I don’t promise an impossible fairytale without flaws. But I promise to understand
-              you, make time for you, stand firmly in your corner, and cheer for your dreams as you
-              reach for the stars. Every single day, my choice is you.
+              When I think about my future, I wish for more days with you.
+              🥹💍 I imagine us growing together, celebrating little victories,
+              laughing over silly things, and making memories we'll never
+              forget. I can't promise every day will be perfect, but I promise
+              to keep learning how to love you better, listen to you, stand
+              beside you, and choose us even when life gets difficult. ♾️❤️
             </motion.p>
 
-            <motion.div
-              className="surprise-letter-closing"
+            <motion.p
+              className="surprise-letter-p"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.9 }}
             >
-              <p className="surprise-letter-signoff">Happy Birthday, my beautiful girl, na bangaram. ❤️</p>
-              <span className="surprise-letter-signature">Always yours, with all my love.</span>
-            </motion.div>
+              Happy Birthday, my beautiful girl. 🎂🎀❤️ Today is your special
+              day, but I feel lucky because life brought me you. I wish you
+              could feel everything my heart is trying to say. When I tell
+              you I love you, I mean that your happiness matters to me, your
+              pain matters to me, and there will always be a special place
+              in my heart that belongs to you. 🥹💗
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.05 }}
+            >
+              I hope this new year of your life brings you happiness,
+              beautiful opportunities, peaceful days, and countless reasons
+              to smile. 🌸✨ Through all the birthdays, changes, and ordinary
+              moments life brings us, I hope I get to keep holding your hand
+              and reminding you how deeply you are loved. 🫶🏻💞
+            </motion.p>
+
+            <motion.p
+              className="surprise-letter-p"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 1.2 }}
+            >
+              I love you, Manisha. ❤️ More than I know how to explain and
+              more than these words can hold. No matter how many times I say
+              it, there will always be more love left in my heart for you.
+              Today, tomorrow, and every day I get to love you, I'll be
+              grateful that it's you. ♾️🥹💗
+              <br /><br />
+              Forever yours, my love. 🫂❤️‍🩹
+            </motion.p>
           </div>
 
-          {/* Button to Stage 2 */}
+          <motion.div
+            className="surprise-letter-closing"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 1.35 }}
+          >
+            <p className="surprise-letter-signoff">
+              Happy Birthday, my beautiful girl, na bangaram. ❤️
+            </p>
+            <span className="surprise-letter-signature">
+              Always yours, with all my love.
+            </span>
+          </motion.div>
+
           <motion.div
             className="surprise-stage1-actions"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 1.05 }}
+            transition={{ duration: 0.6, delay: 1.5 }}
           >
             <button
               type="button"

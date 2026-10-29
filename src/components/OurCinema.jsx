@@ -13,6 +13,7 @@ import {
   Film,
 } from 'lucide-react';
 import { cinemaUniversesList } from '../data/cinemaUniverses';
+import { lockBodyScroll, unlockBodyScroll } from '../utils/lockBodyScroll';
 
 /**
  * ═══════════════════════════════════════════════════════════════════════════
@@ -80,15 +81,21 @@ export default function OurCinema() {
     setSelectedUniverse(pool[randomIndex]);
   }, [filteredUniverses]);
 
-  // Escape key handler
+  // Lock scroll and Escape key handler
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'Escape' && selectedUniverse) {
-        setSelectedUniverse(null);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    if (selectedUniverse) {
+      lockBodyScroll();
+      const handleKeyDown = (e) => {
+        if (e.key === 'Escape') {
+          setSelectedUniverse(null);
+        }
+      };
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        unlockBodyScroll();
+        window.removeEventListener('keydown', handleKeyDown);
+      };
+    }
   }, [selectedUniverse]);
 
   // Navigation inside modal
